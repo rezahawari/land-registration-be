@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const pool = require('./config/db'); // Import koneksi db
 const userRoutes = require('./routes/userRoutes');
+const initDb = require('./config/initDb');
 const path = require('path');
 require('dotenv').config();
 
@@ -44,6 +45,8 @@ app.get('/db-check', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server berjalan di http://localhost:${port}`);
+initDb().then(() => {
+  app.listen(port, () => {
+    console.log(`🚀 Server berjalan di http://localhost:${port}`);
+  });
 });
