@@ -28,7 +28,7 @@ app.use('/api/users', userRoutes);
 
 // Contoh Route Sederhana: Cek Kesehatan Server
 app.get('/', (req, res) => {
-  res.send('Server Express.js + PostgreSQL berjalan!');
+  res.json({ message: 'Server Express.js + PostgreSQL berjalan!' });
 });
 
 // Contoh Route: Ambil waktu sekarang dari Database
@@ -41,8 +41,26 @@ app.get('/db-check', async (req, res) => {
     });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).json({ error: 'Server Error' });
   }
+});
+
+// Middleware untuk handle 404 Not Found - mengembalikan JSON
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Not Found',
+    message: `Endpoint ${req.method} ${req.originalUrl} tidak ditemukan`,
+    status: 404
+  });
+});
+
+// Middleware untuk handle Error - mengembalikan JSON
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal Server Error',
+    status: err.status || 500
+  });
 });
 
 initDb().then(() => {
