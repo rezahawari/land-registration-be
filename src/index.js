@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const pool = require('./config/db'); // Import koneksi db
 const userRoutes = require('./routes/userRoutes');
+const pengajuanRoutes = require('./routes/pengajuanRoutes');
 const initDb = require('./config/initDb');
 const path = require('path');
 require('dotenv').config();
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/api/users', userRoutes);
+app.use('/api/pengajuan', pengajuanRoutes);
 
 // Contoh Route Sederhana: Cek Kesehatan Server
 app.get('/', (req, res) => {
