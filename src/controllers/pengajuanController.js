@@ -100,3 +100,46 @@ exports.createPengajuan = async (req, res) => {
     });
   }
 };
+
+exports.getPengajuanList = async (req, res) => {
+  try {
+    // 1. Ambil ID user dari token (disediakan oleh middleware verifyToken)
+    const userId = req.user.id;
+
+    // 2. Query ke database
+    // Kita urutkan berdasarkan created_at descending (terbaru di atas)
+    const query = `
+      SELECT id, status, created_at, role, owner_name 
+      FROM pengajuan 
+      WHERE user_id = $1 
+      ORDER BY created_at DESC
+    `;
+    
+    const { rows } = await pool.query(query, [userId]);
+
+    // 3. Format data agar sesuai dengan spesifikasi response JSON Anda
+    const formattedData = rows.map(row => ({
+      id: row.id,
+      status: row.status,
+      createdAt: row.created_at,
+      reference_number: `ABB-${row.id}`, // Format reference number (misal: ABB-PRJ_20260227_123)
+      role: row.role,
+      ownerName: row.owner_name
+    }));
+
+    // 4. Kirim response
+    res.status(200).json({
+      success: true,
+      message: "Berhasil mengambil daftar pengajuan",
+      data: formattedData
+    });
+
+  } catch (err) {
+    console.error('Error getPengajuanList:', err.message);
+    res.status(500).json({
+      success: false,
+      message: "Terjadi kesalahan pada server saat mengambil data pengajuan",
+      errors: [{ message: err.message }]
+    });
+  }
+};

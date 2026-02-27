@@ -34,8 +34,13 @@ const uploadMiddleware = (req, res, next) => {
   });
 };
 
-// ---> PASANG VERIFY TOKEN DI SINI <---
+// ---> ROUTE GET: Ambil List Pengajuan <---
+// Endpoint URL: GET {API_BASE_URL}/pengajuan
+router.get('/', verifyToken, pengajuanController.getPengajuanList);
+
+// ---> ROUTE POST: Buat Pengajuan Baru <---
 // Urutannya: Cek Token -> Cek/Upload File -> Proses Database di Controller
+// Endpoint URL: POST {API_BASE_URL}/pengajuan/store
 router.post('/store', verifyToken, uploadMiddleware, pengajuanController.createPengajuan);
 
 module.exports = router;
